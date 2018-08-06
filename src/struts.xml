@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+	<!-- 将struts与spring整合
+		 struts.objectFactory = spring
+		 struts.objectFactory.spring.autoWire = name（默认已经打开）
+	 -->
+	<constant name="struts.objectFactory" value="spring"></constant>
+	
+	<package name="crm" namespace="/" extends="struts-default">
+	
+		<interceptors>
+			<!-- 注册拦截器 -->
+			<interceptor name="privilegeInterceptor" class="com.company.web.interceptor.PrivilegeInterceptor"></interceptor>
+			<!-- 配置拦截器栈 -->
+			<interceptor-stack name="crmStack">
+				<!-- 自定义的拦截器 -->
+				<interceptor-ref name="privilegeInterceptor">
+					<!-- 配置不需要拦截的方法，若要配置需要拦截的方法，
+						则name属性改为includeMethods -->
+					<param name="excludeMethods">login,regist,generateVerifyCode</param>
+				</interceptor-ref>
+				<!-- 框架默认拦截器栈 -->
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<!-- 指定默认拦截器栈 -->
+		<default-interceptor-ref name="crmStack"></default-interceptor-ref>
+		
+		<!-- 全局结果集 -->
+		<global-results>
+			<result name="toLogin" type="redirect">/login.jsp</result>
+		</global-results>
+	
+		<!-- 全局异常映射 -->
+		<global-exception-mappings>
+			<exception-mapping result="error" exception="java.lang.RuntimeException"></exception-mapping>
+		</global-exception-mappings>
+		
+		<!-- 配置UserAction -->
+		<action name="UserAction_*" class="userAction" method="{1}">
+			<result name="toHome" type="redirect">/index.htm</result>
+			<result name="registerror" type="dispatcher">/regist.jsp</result>
+			<result name="toLogin" type="redirect">/login.jsp</result>
+			<!-- 异常处理 -->
+			<result name="error" type="dispatcher">/login.jsp</result>
+		</action>
+		
+		<!-- 配置CustomerAction -->
+		<action name="CustomerAction_*" class="customerAction" method="{1}">
+			<result name="list" type="dispatcher">/jsp/customer/list.jsp</result>
+			<result name="edit" type="dispatcher">/jsp/customer/add.jsp</result>
+			<result name="industryList" type="dispatcher">/jsp/customer/industryList.jsp</result>
+			<result name="sourceList" type="dispatcher">/jsp/customer/sourceList.jsp</result>
+			<result name="toList" type="redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">CustomerAction_list</param>
+			</result>
+		</action>
+		
+		<!-- 配置BaseDictAction -->
+		<action name="BaseDictAction" class="baseDictAction" method="execute">
+		</action>
+		
+		<!-- 配置LinkManAction -->
+		<action name="LinkManAction_*" class="linkManAction" method="{1}">
+			<result name="list" type="dispatcher">/jsp/linkman/list.jsp</result>
+			<result name="edit" type="dispatcher">/jsp/linkman/add.jsp</result>
+			<result name="toList" type="redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">LinkManAction_list</param>
+			</result>
+		</action>
+		
+		<!-- 配置SaleVisitAction_* -->
+		<action name="SaleVisitAction_*" class="saleVisitAction" method="{1}">
+			<result name="edit" type="dispatcher">/jsp/salevisit/add.jsp</result>
+			<result name="list" type="dispatcher">/jsp/salevisit/list.jsp</result>
+			<result name="toList" type="redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">SaleVisitAction_list</param>
+			</result>
+		</action>
+		
+	</package>
+
+</struts>
