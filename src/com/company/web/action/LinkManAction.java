@@ -26,7 +26,7 @@ public class LinkManAction extends ActionSupport implements ModelDriven<LinkMan>
 	public String addOrUpdate() throws Exception {
 		// 调用service保存
 		linkManService.saveOrUpdate(linkMan);
-		return null;
+		return "toList";
 	}
 	
 	/*
@@ -54,7 +54,7 @@ public class LinkManAction extends ActionSupport implements ModelDriven<LinkMan>
 		// 调用Service删除联系人
 		linkManService.deleteById(linkMan.getLkm_id());
 		// 重定向到list
-		return "toList";
+		return null;
 	}
 	
 	public String toEdit() throws Exception {
